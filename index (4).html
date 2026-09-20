@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Helper - Precision Incident Telemetry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0f172a;
+            --primary-darker: #051038;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --text-primary: #ffffff;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --border-color: #1f2937;
+            --success-green: #34d399;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(5, 16, 56, 0.9) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-red);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-login {
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            padding: 0.6rem 1.5rem;
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            padding: 0.6rem 1.5rem;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--primary-darker) 0%, var(--primary-dark) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-cards {
+            display: flex;
+            gap: 1.5rem;
+            flex-direction: column;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .info-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .info-card-icon.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .info-card-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .hero-visual {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mesh-network {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mesh-node {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .node-red {
+            background: var(--accent-red);
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            left: 50%;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .node-green {
+            background: var(--accent-green);
+            width: 50px;
+            height: 50px;
+            top: 60%;
+            left: 10%;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .node-orange {
+            background: var(--accent-orange);
+            width: 50px;
+            height: 50px;
+            top: 50%;
+            right: 15%;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+        }
+
+        .node-blue {
+            background: var(--accent-blue);
+            width: 50px;
+            height: 50px;
+            bottom: 20%;
+            left: 50%;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Features Grid */
+        .features {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon.red {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .feature-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .feature-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Synergize Section - Form Area */
+        .synergize {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .synergize-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .synergize-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .synergize-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .synergize-card-icon {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .synergize-card-icon.red {
+            background: var(--accent-red);
+        }
+
+        .synergize-card-icon.orange {
+            background: var(--accent-orange);
+        }
+
+        .synergize-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .synergize-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-container {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(5, 16, 56, 0.8) 100%);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            border-radius: 12px;
+        }
+
+        .form-container h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-container p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .form-message {
+            display: none;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .form-message.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-green);
+            border: 1px solid var(--accent-green);
+            display: block;
+        }
+
+        .form-message.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            display: block;
+        }
+
+        /* Decision Pipeline */
+        .pipeline {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pipeline-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .pipeline-step {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .pipeline-step h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .pipeline-step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .work-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .work-card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .work-card-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .work-card-icon.purple {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .work-card-icon.orange {
+            background: rgba(249, 115, 22, 0.2);
+        }
+
+        .work-card-icon.red {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .work-card-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .work-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .work-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Emergency Features */
+        .emergency-features {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .features-with-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-with-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-with-btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-with-btn-icon.red {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .feature-with-btn-icon.orange {
+            background: rgba(249, 115, 22, 0.2);
+        }
+
+        .feature-with-btn-icon.green {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .feature-with-btn-icon.blue {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-with-btn h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-with-btn p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .btn-feature {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-feature.red {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-feature.red:hover {
+            background: #dc2626;
+        }
+
+        .btn-feature.orange {
+            background: var(--accent-orange);
+            color: white;
+        }
+
+        .btn-feature.orange:hover {
+            background: #ea580c;
+        }
+
+        .btn-feature.green {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-feature.green:hover {
+            background: #059669;
+        }
+
+        .btn-feature.blue {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-feature.blue:hover {
+            background: #2563eb;
+        }
+
+        .btn-feature.dark {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-feature.dark:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-feature.purple {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .btn-feature.purple:hover {
+            background: #7c3aed;
+        }
+
+        /* Emergency Channels */
+        .emergency-channels {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .channel-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .channel-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-red);
+        }
+
+        .channel-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .channel-card p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .channel-card .btn-primary {
+            width: 100%;
+        }
+
+        /* Integrity Section */
+        .integrity {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .integrity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .integrity-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .integrity-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .integrity-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .integrity-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-dark {
+            background: linear-gradient(135deg, var(--primary-darker) 0%, rgba(5, 16, 56, 0.9) 100%);
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .cta-dark h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-dark p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-darker);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .footer-section h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content,
+            .synergize-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .header-container {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .cta-dark h2 {
+                font-size: 1.5rem;
+            }
+
+            .channel-number {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .cta-buttons .btn-primary,
+            .cta-buttons .btn-login {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">🚨</div>
+                <span>Emergency Helper</span>
+            </div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#channels">Channels</a>
+                <a href="#about">About</a>
+                <div class="nav-buttons">
+                    <button class="btn-login" onclick="openLoginModal()">Login</button>
+                    <button class="btn-primary" onclick="scrollToForm()">Get Started</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <span class="hero-badge">⚡ ADVANCED INCIDENT RESPONSE</span>
+                    <h1>Precision Incident Telemetry & Intelligent Mesh Response</h1>
+                    <p>Real-time incident tracking with intelligent mesh network coordination for faster emergency response.</p>
+                    
+                    <div class="hero-cards">
+                        <div class="info-card">
+                            <div class="info-card-icon red">📍</div>
+                            <div>
+                                <h3>AI-in-Place Triage Assistant</h3>
+                                <p>Real-time location-based incident assessment and resource allocation</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-card-icon green">✓</div>
+                            <div>
+                                <h3>Intelligent Coordination</h3>
+                                <p>Automated mesh network routing for optimal response patterns</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="mesh-network">
+                        <div class="mesh-node node-red">🔴</div>
+                        <div class="mesh-node node-green">🟢</div>
+                        <div class="mesh-node node-orange">🟠</div>
+                        <div class="mesh-node node-blue">🔵</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Ensuring Incident Resolution with Advanced Intelligence</h2>
+            <p class="section-subtitle">Comprehensive tools designed for modern emergency response</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon red">📊</div>
+                    <h3>Real-Time Analytics</h3>
+                    <p>Monitor incidents as they unfold with live data streaming and predictive analysis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">🛡️</div>
+                    <h3>Safety Guardrails</h3>
+                    <p>Built-in protocols to ensure responsible and ethical incident handling</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">🔗</div>
+                    <h3>Mesh Integration</h3>
+                    <p>Seamless coordination across distributed emergency response networks</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon red">📍</div>
+                    <h3>Location Intelligence</h3>
+                    <p>Precise geolocation services for rapid resource deployment</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">⚡</div>
+                    <h3>Fast Response</h3>
+                    <p>Optimized workflows reduce response time by up to 60%</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">🔄</div>
+                    <h3>Continuous Learning</h3>
+                    <p>AI-powered insights that improve response strategies over time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Synergize Your Safety Data -->
+    <section class="synergize">
+        <div class="container">
+            <div class="synergize-content">
+                <div class="synergize-left">
+                    <div>
+                        <h2 class="section-title">Synergize Your Safety Data</h2>
+                        <p class="section-subtitle">Integrate all your emergency data streams into one unified platform</p>
+                    </div>
+                    
+                    <div class="synergize-card">
+                        <div class="synergize-card-icon red">📡</div>
+                        <div>
+                            <h4>Multi-Source Integration</h4>
+                            <p>Connect data from sensors, dispatch systems, and field teams</p>
+                        </div>
+                    </div>
+                    
+                    <div class="synergize-card">
+                        <div class="synergize-card-icon orange">🎯</div>
+                        <div>
+                            <h4>Unified Dashboard</h4>
+                            <p>Single pane of glass for all incident information and metrics</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <h3>Get Started Today</h3>
+                    <p>Join thousands of emergency services using intelligent incident response</p>
+                    
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Your name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="Your phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">Send Request</button>
+                        <div class="form-message" id="formMessage"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Decision Pipeline -->
+    <section class="pipeline">
+        <div class="container">
+            <h2 class="section-title">Interactive Decision Pipeline</h2>
+            <p class="section-subtitle">Streamlined process from detection to resolution</p>
+            
+            <div class="pipeline-steps">
+                <div class="pipeline-step">
+                    <div class="step-number">1</div>
+                    <h4>Detect</h4>
+                    <p>Sensors and reports detect emerging incidents in real-time</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">2</div>
+                    <h4>Assess</h4>
+                    <p>AI analyzes incident severity and resource requirements</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">3</div>
+                    <h4>Route</h4>
+                    <p>Intelligent mesh routes requests to optimal responders</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">4</div>
+                    <h4>Coordinate</h4>
+                    <p>Teams coordinate response with unified communications</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">5</div>
+                    <h4>Monitor</h4>
+                    <p>Live tracking of response progress and outcomes</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">6</div>
+                    <h4>Learn</h4>
+                    <p>Post-incident analysis improves future responses</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Emergency Helper Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How Emergency Helper Works</h2>
+            <p class="section-subtitle">Six simple steps to better emergency response</p>
+            
+            <div class="works-grid">
+                <div class="work-card">
+                    <div class="work-card-icon blue">1</div>
+                    <h4>Create an Account</h4>
+                    <p>Sign up and configure your organization's incident response parameters</p>
+                </div>
+                <div class="work-card">
+                    <div class="work-card-icon purple">2</div>
+                    <h4>Detect Your Location</h4>
+                    <p>Enable location services for automatic incident geographic routing</p>
+                </div>
+                <div class="work-card">
+                    <div class="work-card-icon orange">3</div>
+                    <h4>Set Assistance</h4>
+                    <p>Configure incident types and assistance preferences for your team</p>
+                </div>
+                <div class="work-card">
+                    <div class="work-card-icon red">4</div>
+                    <h4>Rapid Response</h4>
+                    <p>Get instant connection to nearby emergency resources and coordination</p>
+                </div>
+                <div class="work-card">
+                    <div class="work-card-icon green">5</div>
+                    <h4>Real-Time Updates</h4>
+                    <p>Receive live notifications and status updates throughout the response</p>
+                </div>
+                <div class="work-card">
+                    <div class="work-card-icon blue">6</div>
+                    <h4>Complete & Analyze</h4>
+                    <p>Mark incident complete and access analytics for continuous improvement</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Features -->
+    <section class="emergency-features">
+        <div class="container">
+            <h2 class="section-title">Everything You Need in an Emergency</h2>
+            <p class="section-subtitle">Comprehensive features for complete incident management</p>
+            
+            <div class="features-with-buttons">
+                <div class="feature-with-btn">
+                    <div class="feature-with-btn-icon red">🚨</div>
+                    <h4>Rapid Alert</h4>
+                    <p>Immediate incident broadcasting to all available responders in your network</p>
+                    <button class="btn-feature red">Enable Alerts</button>
+                </div>
+                <div class="feature-with-btn">
+                    <div class="feature-with-btn-icon orange">🚑</div>
+                    <h4>Fire & Rescue Services</h4>
+                    <p>Direct connection to certified fire and rescue professionals</p>
+                    <button class="btn-feature orange">Learn More</button>
+                </div>
+                <div class="feature-with-btn">
+                    <div class="feature-with-btn-icon green">🏥</div>
+                    <h4>Medical Assistance</h4>
+                    <p>Instant access to medical professionals and emergency healthcare</p>
+                    <button class="btn-feature green">Request Help</button>
+                </div>
+                <div class="feature-with-btn">
+                    <div class="feature-with-btn-icon blue">👮</div>
+                    <h4>Police Dispatch</h4>
+                    <p>Coordinated police response with real-time situation awareness</p>
+                    <button class="btn-feature dark">Contact Police</button>
+                </div>
+                <div class="feature-with-btn">
+                    <div class="feature-with-btn-icon purple">🛡️</div>
+                    <h4>Emergency Contacts</h4>
+                    <p>Pre-configured emergency contacts with instant notification capability</p>
+                    <button class="btn-feature purple">Add Contacts</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Channels -->
+    <section class="emergency-channels" id="channels">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center;">Direct Emergency Toll-Free Channels</h2>
+            
+            <div class="channels-grid">
+                <div class="channel-card">
+                    <div class="channel-number">112</div>
+                    <h3>National Unified Emergency</h3>
+                    <p>Call 112 for immediate emergency services dispatch and coordination</p>
+                    <button class="btn-primary">📞 Call 112 Toll-Free</button>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-number">108</div>
+                    <h3>Medical & Ambulance Care</h3>
+                    <p>Call 108 for immediate ambulance and emergency medical services</p>
+                    <button class="btn-secondary">🚑 Call 108 Ambulance</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integrity Section -->
+    <section class="integrity" id="about">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center;">Built With Integrity & Strict Guardrails</h2>
+            
+            <div class="integrity-grid">
+                <div class="integrity-card">
+                    <div class="integrity-icon">🔐</div>
+                    <h4>Data Encryption</h4>
+                    <p>All incident data is encrypted end-to-end with military-grade security standards to ensure privacy and integrity</p>
+                </div>
+                <div class="integrity-card">
+                    <div class="integrity-icon">✅</div>
+                    <h4>Compliance Standards</h4>
+                    <p>Full compliance with emergency response regulations and data protection requirements across all jurisdictions</p>
+                </div>
+                <div class="integrity-card">
+                    <div class="integrity-icon">👥</div>
+                    <h4>Accountability & Transparency</h4>
+                    <p>Complete audit trails and transparent incident logs for compliance and continuous system improvement</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-dark">
+        <div class="container">
+            <h2>Be Prepared, Get Help Faster</h2>
+            <p>Create your Emergency Helper account today and experience the future of coordinated emergency response</p>
+            <div class="cta-buttons">
+                <button class="btn-primary" onclick="scrollToForm()">Create Free Account</button>
+                <button class="btn-login" onclick="openLoginModal()">Login to Portal</button>
+                <button class="btn-login" onclick="callEmergency('108')">Emergency 108</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Emergency Helper</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#channels">Emergency Channels</a></li>
+                        <li><a href="#about">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Safety Guidelines</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Docs</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Compliance</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Emergency Contacts</h4>
+                    <ul>
+                        <li><a href="#">📞 Emergency 112</a></li>
+                        <li><a href="#">🚑 Ambulance 108</a></li>
+                        <li><a href="#">24/7 Support</a></li>
+                        <li><a href="#">Report Issue</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Emergency Helper Platform. All rights reserved.</p>
+                <p>Emergency Response Technology by Emergency Helper Inc.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Apps Script URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzN9Wz8mWgw8R3MGtefRzcNsX0zpZV3qFg4Jg3kyCJsOwPWn-WVQ4pSPuPWptc75XDJ/exec';
+
+        // Scroll to form
+        function scrollToForm() {
+            document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('name').focus();
+        }
+
+        // Open login modal
+        function openLoginModal() {
+            const email = prompt('Enter your email address:');
+            if (email) {
+                const password = prompt('Enter your password:');
+                if (password) {
+                    alert('✓ Login successful! Redirecting to your dashboard...');
+                    console.log('Login attempted with:', email);
+                }
+            }
+        }
+
+        // Call emergency numbers
+        function callEmergency(number) {
+            window.location.href = 'tel:' + number;
+        }
+
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            // Build the URL with query parameters
+            const params = new URLSearchParams({
+                name: name,
+                email: email,
+                phone: phone
+            });
+
+            const url = SCRIPT_URL + '?' + params.toString();
+
+            // Fetch with GET and no-cors mode
+            fetch(url, {
+                method: 'GET',
+                mode: 'no-cors'
+            })
+            .then(() => showSuccess())
+            .catch(() => showError());
+        });
+
+        function showSuccess() {
+            const messageEl = document.getElementById('formMessage');
+            messageEl.textContent = '✓ Thank you! Your request has been sent successfully.';
+            messageEl.className = 'form-message success';
+            
+            // Clear form
+            document.getElementById('contactForm').reset();
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageEl.className = 'form-message';
+            }, 5000);
+        }
+
+        function showError() {
+            const messageEl = document.getElementById('formMessage');
+            messageEl.textContent = '✗ Error sending request. Please try again.';
+            messageEl.className = 'form-message error';
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageEl.className = 'form-message';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
